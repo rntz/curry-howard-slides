@@ -1,0 +1,127 @@
+* Notes to self
+Don't use subscripts! Just use different letters.
+
+Use slides *and* whiteboard.
+
+* Outline
+Begin with overview of what I'm going to show.
+If you ever feel lost, do not hesitate to ask a question, or just say "I'm lost".
+If you ever feel like you need to see how whatever we're discussing relates to the bigger picture, tell me.
+
+** Natural Deduction for IPC
+*** What is a formal logic?
+Logic (mostly) studies *propositions* and *proofs*.
+
+A *proposition* is something like "it's raining outside" or "2 > 3". They don't
+have to be true! For this talk, we mostly don't define what our propositions
+are.
+- Maybe they're mathematical things, "2 + 2 = 4".
+- Maybe they're subjective assertions, like "cheese tastes good" or "I like perl".
+- Maybe they're assertions about the world, "it's raining in Paris".
+
+But we do define several ways to *combine* propositions: connectives.
+
+A *proof* is something that establishes one proposition by assuming some other
+propositions.
+
+A formal logic is a system that makes it *perfectly clear* whether a proof is
+valid or not. *So clear* that a computer can check them! It can't rely on our
+intuitions! It "reduces logic to symbol-pushing".
+
+A formal logic has to define what propositions it's talking about.
+
+*** Rules of inference: horizontal bar notation
+*** Conjunction
+- Show intro, elim rules for conjunction
+- From (A ^ (B ^ C)), prove B.
+- Explain what an "assumption" is. Label assumptions.
+- From A, prove A ^ A.
+  You can use assumptions more than once!
+- From assumptions (A ^ B) and C, prove B ^ C.
+
+*** Implication
+**** Elim rule (modus ponens)
+- Explain rule
+- Example proof: From A, B, (A ^ B) -> C, prove C.
+- So that's how we use an implication.
+
+**** Intro rule
+- How do we prove an implication?
+  Well, one natural way to prove "A implies B" is: assume A, and from this assumption, prove B.
+  This works no matter whether A is true or false - you may not even know if A is true!
+
+  For example: "if it rains tomorrow, we will be unhappy."
+  Assume it rains tomorrow.
+  We're going hiking tomorrow (I know this).
+  Hiking in the rain sucks (I also know this).
+  So we'll be unhappy.
+  Thus, assuming it rains tomorrow, I've shown we'll be unhappy.
+  If it rains, we'll be unhappy. QED.
+
+  for example: "if 2 + 2 = 5 then 2 = 3". assume 2 + 2 = 5. then:
+        2 + 2 = 5               assumption
+        2 + 2 - 2 = 5 - 2       subtract 2 from both sides
+        2 = 3                   arithmetic
+  thus, "(2 + 2 = 5) -> (2 = 3)". QED
+
+- Explain rule
+- ASIDE: this style of proof system is called "natural deduction" because this
+  rule feels so natural. in other systems of logic this way of reasining is not
+  taken for granted.
+
+- From (A -> B) prove (A -> A ^ B)
+
+- Illegitimate proof: (A -> A) ^ A
+  why false: consider "2 + 2 = 5" for A
+  Show "proof". Explain scoping problem.
+
+- Other example proofs:
+  From (A -> (B -> C)) prove A ^ B -> C.
+  Extend to ((A -> B) -> (A -> A ^ B))?
+
+- "Is the nesting confusing anyone?"
+  If confusion about nested ->s, analogy to nested ifs in programming languages:
+
+    if (a) { if (b) { ... } } == if (a && b) { ... }
+
+  "this might be hard to grasp all at once. if it is, that's okay! one of the
+  wonderful things about proofs, though, is that you don't have to understand it
+  all at once to check whether it's true. you just have to check each rule
+  itself: is each use of a rule legitimate? then it's a valid proof!"
+
+*** Disjunction (?)
+*** Negation (?) (... maybe later)
+
+** Simply Typed Lambda Calculus with Pairs
+*** What have we got: functions & pairs
+Show lambda-calculus-to-python conversion table.
+
+*** Types
+Show lambda-calculus-to-Haskell conversion table.
+
+*** Computation (beta-reduction)
+I've told you what the language *looks* like, but I haven't told you how it *works*.
+
+I've said "\x.M" represents a function, and "(M,N)" represents a pair, but I'm
+just relying on your intuition about what functions/pairs are. What does
+it *actually* do?
+
+In arithmetic, what "+" means is described by what it calculates: for example,
+"2 + 2" *evaluates* to their sum 4. So to give meaning to this language, I must
+show you how to evaluate expressions. For that I use the following rules:
+
+  pi_1 (M,N) --> M
+  pi_2 (M,N) --> N
+  (\x>M) N --> [N/x] M
+
+** Wait, these are the same thing!
+
+** What does /computation/ mean for logic?
+Show what the beta rules do to logic: contract intro-elim "pairs".
+
+    (\x.M) N --> [N/x] M
+    pi_1 (M,N) --> M
+    pi_2 (M,N) --> N
+
+A closed (no-assumption) proof in normal form: all introduction rules, "no detours"
+An open proof in normal form: more complicated (if someone asks: "all introduction forms until you get to elim forms centered on your open assumptions")
