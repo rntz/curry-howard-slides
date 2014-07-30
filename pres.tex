@@ -1,0 +1,189 @@
+\documentclass{beamer}
+
+\usepackage{proof}
+
+\title{Curry-Howard From The Ground Up}
+\author{Michael Arntzenius}
+%% TODO: \date
+
+%\usetheme{Malmoe}
+%\usecolortheme{seahorse}
+
+\definecolor{ignore}{rgb}{0.8,0.8,0.8}
+
+\newcommand{\isassumed}{\textsf{\tiny{\emph{(assumed)}}}}
+\newcommand{\assumed}[1]{\deduce{#1}{\isassumed}}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+%% \begin{frame}
+%%   \frametitle{Table of Contents}
+%%   \tableofcontents
+%% \end{frame}
+
+\begin{frame}
+  \frametitle{What's this talk about?}
+  \begin{enumerate}
+  \item A simple formal logic (natural deduction)
+  \item A simple programming language ($\lambda$-calculus)
+  \item How they're \emph{secretly the same thing!!}
+    %% TODO: more convincing/accurate
+  \item The bigger picture % (``why should I care?'')
+  \end{enumerate}
+\end{frame}
+
+
+\section{1. Formal Logic}
+%\section{A simple formal logic (natural deduction)}
+
+%\begin{frame} \tableofcontents[currentsection] \end{frame}
+
+\begin{frame}
+  %\frametitle{What's a formal logic?}
+
+  \begin{center}
+    {\Large\bf What's a formal logic?}
+  \end{center}
+  %Something that makes it \textbf{perfectly clear} when a proof is valid.
+
+\end{frame}
+
+\newcommand{\rn}[1]{\ensuremath{\mathtt{#1}}}
+
+\begin{frame}
+  \frametitle{Inference rules}
+
+  % Inference rules are one way of structuring formal proofs.
+
+  \[
+  \infer[\rn{RuleName}]{conclusion}{premise_1 & premise_2 & \cdots & premise_n}
+  \]
+
+  \textbf{If} $premise_1$, $premise_2$, ..., and $premise_n$,\\
+  \textbf{then} $conclusion$,\\
+  \textbf{by} rule $\rn{RuleName}$.
+\end{frame}
+
+\begin{frame}
+  \frametitle{Defining inference rules}
+
+  % Inference rules can be \textbf{defined}:
+  \[
+  \infer[\rn{transitivity}]{a < c}{a < b & b < c}
+  \]
+  This \emph{defines} a rule of inference called \rn{transitivity}.
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Using inference rules in proofs}
+
+  % Once defined, we can use inference rules in \textbf{proofs}:
+  % Inference rules can be PLUGGED INTO one another.
+
+  \[
+  \infer[\rn{transitivity}]{a < d}{
+    \assumed{a < b} &
+    \infer[\rn{transitivity}]{b < d}{
+      \assumed{b < c} &
+      \assumed{c < d}}}
+  \]
+
+  This \textbf{proves} that $a < d$ \textbf{from} the (unproven) assumptions $a
+  < b$, $b < c$, and $c < d$, \textbf{using} the \rn{transitivity} rule.
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{A simple logic}
+  \begin{center}
+    \begin{tabular}{cc}
+      Connective & Meaning\\
+      \hline
+      $A \wedge B$ & ``$A$ and $B$''\\
+      $A \to B$ & ``$A$ implies $B$'', or ``given $A$ then $B$''\\
+      \color{ignore} $A \vee B$
+      & \color{ignore} ``$A$ or $B$ (\emph{and I know which one})''\\
+      \color{ignore} $\neg A$
+      & \color{ignore} ``not $A$'' or ``refutation of $A$''
+    \end{tabular}
+  \end{center}
+\end{frame}
+
+
+\subsection{The $\wedge$ connective}
+\begin{frame}
+  \frametitle{A simple logic: $\wedge$}
+
+  %This rule lets you prove $A \wedge B$:
+  \[
+  \infer[\!\wedge\rn{I}]{A \wedge B}{A & B}
+  \qquad
+  %Given $A \wedge B$, these rules let you prove other things:
+  \infer[\!\wedge\rn{E}_1]{A}{A \wedge B} \qquad
+  \infer[\!\wedge\rn{E}_2]{B}{A \wedge B}
+  \]
+\end{frame}
+
+\begin{frame}
+  \frametitle{A simple logic: $\wedge$: example proofs}
+  \[
+  \onslide<2-4>{
+    \infer[\!\wedge\rn{E}_1]{B}{
+      \infer[\!\wedge\rn{E}_2]{B \wedge C}{
+        \assumed{A \wedge (B \wedge C)}}
+    }
+  }
+  \qquad
+  \onslide<3-4>{
+    \infer[\!\wedge\rn{I}]{A \wedge A}{\assumed{A} & \assumed{A}}
+  }
+  \qquad
+  \onslide<4>{
+    \infer[\!\wedge\rn{I}]{B \wedge C}{
+      \infer[\!\wedge\rn{E}_2]{B}{\assumed{A \wedge B}}
+      & \assumed{C}}
+  }
+  \]
+
+  {\small For reference:
+  \[
+  \infer[\!\wedge\rn{I}]{A \wedge B}{A & B} \qquad
+  \infer[\!\wedge\rn{E}_1]{A}{A \wedge B} \qquad
+  \infer[\!\wedge\rn{E}_2]{B}{A \wedge B}
+  \]
+  }
+\end{frame}
+
+
+\section{2. Programming Language}
+%\section{A simple programming language ($\lambda$-calculus)}
+
+\begin{frame}
+  %\frametitle{A $\lambda$-calculus primer}
+  TODO: $\lambda$-calculus stuff
+\end{frame}
+
+
+\section{3. Curry-Howard}
+%\section{How they're {\it secretly the same thing!!}}
+
+\begin{frame}
+  \frametitle{Wait, what?}
+  TODO: how are they the same thing?
+\end{frame}
+
+
+\section{4. The Big Picture}
+%\section{The bigger picture (``why should I care'')}
+
+\begin{frame}
+  \frametitle{In context}
+  TODO: what's the bigger picture anyway?
+\end{frame}
+
+\end{document}
