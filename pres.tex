@@ -1,6 +1,8 @@
 \documentclass{beamer}
 
 \usepackage{proof}
+\usepackage{ulem}
+\usepackage{dashrule}
 
 \title{Curry-Howard From The Ground Up}
 \author{Michael Arntzenius}
@@ -11,11 +13,21 @@
 
 \definecolor{ignore}{rgb}{0.8,0.8,0.8}
 
-\newcommand{\isassumed}{\textsf{\tiny{\emph{(assumed)}}}}
+\newcommand{\isassumed}{\textsf{\tiny{\textit{(assumed)}}}}
 \newcommand{\assumed}[1]{\deduce{#1}{\isassumed}}
+\newcommand{\x}{\times}
+\newcommand{\impl}{\supset}
+\newcommand{\steps}{\mapsto}
+\newcommand{\subst}[1]{[#1]\,}
+
+\newcommand{\wedgeI}{\!\wedge\rn{I}}
+\newcommand{\wedgeE}{\!\wedge\rn{E}}
+\newcommand{\implI}{\!\impl\!\rn{I}}
+\newcommand{\implE}{\!\impl\!\rn{E}}
 
 \begin{document}
 
+
 \begin{frame}
   \titlepage
 \end{frame}
@@ -30,9 +42,9 @@
   \begin{enumerate}
   \item A simple formal logic (natural deduction)
   \item A simple programming language ($\lambda$-calculus)
-  \item How they're \emph{secretly the same thing!!}
+  \item How they're \textit{secretly the same thing!!}
     %% TODO: more convincing/accurate
-  \item The bigger picture % (``why should I care?'')
+  \item Where is this relevant? % (``why should I care?'')
   \end{enumerate}
 \end{frame}
 
@@ -46,7 +58,7 @@
   %\frametitle{What's a formal logic?}
 
   \begin{center}
-    {\Large\bf What's a formal logic?}
+    {\Large\bf What's formal logic?}
   \end{center}
   %Something that makes it \textbf{perfectly clear} when a proof is valid.
 
@@ -75,28 +87,46 @@
   \[
   \infer[\rn{transitivity}]{a < c}{a < b & b < c}
   \]
-  This \emph{defines} a rule of inference called \rn{transitivity}.
+  This \textbf{defines} a rule of inference called \rn{transitivity}.
 
 \end{frame}
 
 \begin{frame}
-  \frametitle{Using inference rules in proofs}
+  \frametitle{Using inference rules to prove things}
+  \vspace{-1.5em}
+  \[\infer[\rn{transitivity}]{a < c}{a < b & b < c}\]
+  \vspace{.2em}
 
-  % Once defined, we can use inference rules in \textbf{proofs}:
-  % Inference rules can be PLUGGED INTO one another.
+  Suppose we know that $a < b$, $b < c$, and $c < d$. We'd like to
+  \textbf{prove} that $a < d$ using our \rn{transitivity} rule.
 
-  \[
-  \infer[\rn{transitivity}]{a < d}{
-    \assumed{a < b} &
-    \infer[\rn{transitivity}]{b < d}{
-      \assumed{b < c} &
-      \assumed{c < d}}}
-  \]
-
-  This \textbf{proves} that $a < d$ \textbf{from} the (unproven) assumptions $a
-  < b$, $b < c$, and $c < d$, \textbf{using} the \rn{transitivity} rule.
-
+  \onslide<2->{\[
+    \infer[\rn{transitivity}]{a < d}{
+      \assumed{a < b} &
+      \infer[\rn{transitivity}]{b < d}{
+        \assumed{b < c} &
+        \assumed{c < d}}}
+  \]}
 \end{frame}
+
+%% \begin{frame}
+%%   \frametitle{Using inference rules in proofs}
+
+%%   % Once defined, we can use inference rules in \textbf{proofs}:
+%%   % Inference rules can be PLUGGED INTO one another.
+
+%%   \[
+%%   \infer[\rn{transitivity}]{a < d}{
+%%     \assumed{a < b} &
+%%     \infer[\rn{transitivity}]{b < d}{
+%%       \assumed{b < c} &
+%%       \assumed{c < d}}}
+%%   \]
+
+%%   This \textbf{proves} that $a < d$\\ \textbf{from} the (unproven) assumptions $a
+%%   < b$, $b < c$, and $c < d$,\\ \textbf{using} the \rn{transitivity} rule.
+
+%% \end{frame}
 
 \begin{frame}
   \frametitle{A simple logic}
@@ -105,58 +135,212 @@
       Connective & Meaning\\
       \hline
       $A \wedge B$ & ``$A$ and $B$''\\
-      $A \to B$ & ``$A$ implies $B$'', or ``given $A$ then $B$''\\
+      $A \impl B$ & ``$A$ implies $B$'', or ``given $A$ then $B$''\\
       \color{ignore} $A \vee B$
-      & \color{ignore} ``$A$ or $B$ (\emph{and I know which one})''\\
+      & \color{ignore} ``$A$ or $B$ (\textit{and I know which one})''\\
       \color{ignore} $\neg A$
-      & \color{ignore} ``not $A$'' or ``refutation of $A$''
+      & \color{ignore} ``not $A$'' or ``refutation of $A$''\\
+      %% \color{ignore} $\forall x.\, A$ & \color{ignore} ``$A$ holds of all $x$''\\
+      %% \color{ignore} $\exists x.\, A$ & \color{ignore} ``$A$ holds of some $x$''\\
     \end{tabular}
   \end{center}
 \end{frame}
 
 
-\subsection{The $\wedge$ connective}
+%\subsection{The $\wedge$ connective}
 \begin{frame}
   \frametitle{A simple logic: $\wedge$}
 
   %This rule lets you prove $A \wedge B$:
   \[
-  \infer[\!\wedge\rn{I}]{A \wedge B}{A & B}
+  \infer[\wedgeI]{A \wedge B}{A & B}
   \qquad
   %Given $A \wedge B$, these rules let you prove other things:
-  \infer[\!\wedge\rn{E}_1]{A}{A \wedge B} \qquad
-  \infer[\!\wedge\rn{E}_2]{B}{A \wedge B}
+  \onslide<2->{\infer[\wedgeE_1]{A}{A \wedge B}}
+  \qquad
+  \onslide<3->{\infer[\wedgeE_2]{B}{A \wedge B}}
   \]
 \end{frame}
 
 \begin{frame}
   \frametitle{A simple logic: $\wedge$: example proofs}
   \[
-  \onslide<2-4>{
-    \infer[\!\wedge\rn{E}_1]{B}{
-      \infer[\!\wedge\rn{E}_2]{B \wedge C}{
+  \onslide<2->{
+    \infer[\wedgeE_1]{B}{
+      \infer[\wedgeE_2]{B \wedge C}{
         \assumed{A \wedge (B \wedge C)}}
     }
   }
   \qquad
-  \onslide<3-4>{
-    \infer[\!\wedge\rn{I}]{A \wedge A}{\assumed{A} & \assumed{A}}
+  \onslide<3->{
+    \infer[\wedgeI]{A \wedge A}{\assumed{A} & \assumed{A}}
   }
   \qquad
   \onslide<4>{
-    \infer[\!\wedge\rn{I}]{B \wedge C}{
-      \infer[\!\wedge\rn{E}_2]{B}{\assumed{A \wedge B}}
+    \infer[\wedgeI]{B \wedge C}{
+      \infer[\wedgeE_2]{B}{\assumed{A \wedge B}}
       & \assumed{C}}
   }
   \]
 
   {\small For reference:
   \[
-  \infer[\!\wedge\rn{I}]{A \wedge B}{A & B} \qquad
-  \infer[\!\wedge\rn{E}_1]{A}{A \wedge B} \qquad
-  \infer[\!\wedge\rn{E}_2]{B}{A \wedge B}
+  \infer[\wedgeI]{A \wedge B}{A & B} \qquad
+  \infer[\wedgeE_1]{A}{A \wedge B} \qquad
+  \infer[\wedgeE_2]{B}{A \wedge B}
   \]
   }
+\end{frame}
+
+
+%\subsection{The $\impl$ connective}
+\begin{frame}
+  \frametitle{A simple logic: $\impl$}
+  \[
+  \infer[\implI]{A \impl B}{???}
+  \qquad
+  \infer[\implE]{B}{A \impl B & A}
+  \]
+\end{frame}
+
+\begin{frame}
+  %% omit this if people seem comfortable
+  \frametitle{A simple logic: $\impl$: example proof (1)}
+
+  Let's try to prove $C$ given $A$, $B$, and $(A \wedge B) \impl C$:
+  \onslide<2>{\[
+    \infer[\implE]{C}{
+      \assumed{(A \wedge B) \impl C} &
+      \infer[\wedgeI]{A \wedge B}{\assumed{A} & \assumed{B}}
+    }
+  \]}
+
+  For reference:
+  \[
+  \infer[\implI]{A \impl B}{???}
+  \qquad
+  \infer[\implE]{B}{A \impl B & A}
+  \]
+\end{frame}
+
+\newcommand{\lhyp}[3]{%
+\deduce[\ \ \hdashrule{#1}{0.4pt}{2pt 1pt}_{#2}]{#3}{}%
+}
+%% \newcommand{\hyp}[2]{%
+%% \deduce[\ \ \hdashrule{0.6cm}{0.4pt}{2pt 1pt}_{#1}]{#2}{}%
+%% }
+\newcommand{\hyp}[2]{\lhyp{0.6cm}{#1}{#2}}
+
+\begin{frame}
+  \frametitle{A simple logic: $\impl$}
+  \[
+  \infer[\implI\onslide<3->{_x}]{A \impl B}{
+    \alt<2->{
+      \deduce[\ ^{\vdots}]{B}{
+        \deduce[\onslide<3->{\ \ \hdashrule{0.6cm}{0.4pt}{2pt 1pt}_x}]{A}{}
+      }
+    }{???}
+  }
+  \qquad
+  \infer[\implE]{B}{A \impl B & A}
+  \]
+\end{frame}
+
+\begin{frame}
+  \frametitle{A simple logic: $\impl$: example proof (2)}
+
+  Let's try to prove, given $A \impl B$, that $A \impl (A \wedge B)$:
+
+  \onslide<2->{\[
+  \infer[\implI_x]{A \impl (A \wedge B)}{
+    \infer[\wedgeI]{A \wedge B}{
+      \hyp{x}{A} &
+      \infer[\implE]{B}{
+        \assumed{A \impl B} &
+        \hyp{x}{A}
+      }
+    }
+  }
+  \]}
+
+  For reference:
+  \[
+  \infer[\implI_x]{A \impl B}{
+    \deduce[\ ^{\vdots}]{B}{\hyp{x}{A}}}
+  \qquad
+  \infer[\implE]{B}{A \impl B & A}
+  \]
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{A simple logic: $\impl$: example proof (3)}
+
+  What's wrong with this ``proof'' of $(A \impl A) \wedge A$?
+  \onslide<2->{\[
+  \infer[\wedgeI]{(A \impl A) \wedge A}{
+    \infer[\implI_x]{A \impl A}{
+      \hyp{x}{A}
+    }
+    &
+    \hyp{x}{A}
+  }
+  \]}
+
+  For reference:
+  \[
+  \infer[\implI_x]{A \impl B}{
+    \deduce[\ ^{\vdots}]{B}{\hyp{x}{A}}}
+  \qquad
+  \infer[\implE]{B}{A \impl B & A}
+  \]
+\end{frame}
+
+\begin{frame}
+  \frametitle{A simple logic: $\impl$: example proof (4)}
+  %% omit if people feel comfortable
+
+  Let's try to prove $(A \wedge B) \impl C$ from $A \impl (B \impl C)$:
+
+  \onslide<2->{\[
+  \infer[\implI_x]{(A \wedge B) \impl C}{
+    \infer[\implE]{C}{
+      \infer[\implE]{B \impl C}{
+        \assumed{A \impl (B \impl C)} &
+        \infer[\wedgeE_1]{A}{\lhyp{1.15cm}{x}{A \wedge B}}
+      }
+      &
+      \infer[\wedgeE_2]{B}{\lhyp{1.15cm}{x}{A \wedge B}}
+    }
+  }
+  \]}
+
+  For reference:
+  \[
+  \infer[\implI_x]{A \impl B}{
+    \deduce[\ ^{\vdots}]{B}{\hyp{x}{A}}}
+  \qquad
+  \infer[\implE]{B}{A \impl B & A}
+  \]
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{A simple logic (all together now)}
+  \[
+  \infer[\wedgeI]{A \wedge B}{A & B}
+  \qquad
+  \infer[\wedgeE_1]{A}{A \wedge B}
+  \qquad
+  \infer[\wedgeE_2]{B}{A \wedge B}
+  \]
+
+  \[
+  \infer[\implI_x]{A \impl B}{
+    \deduce[\ ^{\vdots}]{B}{\hyp{x}{A}}}
+  \qquad
+  \infer[\implE]{B}{A \impl B & A}
+  \]
 \end{frame}
 
 
@@ -165,7 +349,112 @@
 
 \begin{frame}
   %\frametitle{A $\lambda$-calculus primer}
-  TODO: $\lambda$-calculus stuff
+  \begin{center}
+    {\Large \bf A simple programming language \\
+    ($\lambda$-calculus)}
+  \end{center}
+\end{frame}
+
+\newcommand{\pair}[2]{\langle{#1},{#2}\rangle}
+\newcommand{\projl}{\pi_1\,}
+\newcommand{\projr}{\pi_2\,}
+
+\begin{frame}
+  \frametitle{A simple $\lambda$-calculus}
+  %% x stands for variables
+  %% a,b stands for expressions
+  %% A,B stand for types
+  \begin{center}
+    \begin{tabular}{ccc}
+      Syntax & What is it? & in Python\\
+      \hline
+      $\lambda x. a$
+      & Anonymous function
+      & \texttt{lambda\ x:\ a}\\
+      $a\,b$
+      & Function application
+      & \texttt{a(b)}\\
+      $\pair{a}{b}$ & Make a pair & \texttt{(a,b)}\\
+      $\projl a$ & First element of pair & \texttt{a[0]}\\
+      $\projr a$ & Second element of pair & \texttt{a[1]}\\
+    \end{tabular}
+  \end{center}
+\end{frame}
+
+\begin{frame}
+  \begin{center}
+    {\Large\bf What does $\projl (\lambda x. x)$ do?}
+
+    \vspace{1em}
+    {\large In Python: \texttt{(lambda\ x:\ x)[0]}}
+  \end{center}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{A simple $\lambda$-calculus: types}
+
+  \begin{center}
+    \begin{tabular}{cccc}
+      Type & What is it? & in Haskell\\
+      \hline
+      $A \to B$ & Functions from $A$ to $B$ & \texttt{A -> B}\\
+      $A \x B$ & Pairs of $A$s and $B$s & \texttt{(A,B)}\\
+    \end{tabular}
+  \end{center}
+\end{frame}
+
+\begin{frame}
+  \begin{center}
+    {\Large \bf How do I know what type an expression has?}
+
+    \vspace{1em}
+    \onslide<2>{\Large\bf Maybe we can we use inference rules!}
+  \end{center}
+\end{frame}
+
+\newcommand{\isa}[2]{\visible<-5>{{ {#1} :\ }} {#2}}
+\newcommand{\xname}[2]{\alt<7->{#2}{#1}}
+\newcommand{\xx}{\alt<7->{\wedge}{\x}}
+\newcommand{\xto}{\alt<7->{\impl}{\to}}
+
+\begin{frame}
+  \frametitle{A simple $\lambda$-calculus: typing rules}
+
+  %We write $a : A$ for ``the expression $a$ has type $A$''.
+
+  \[
+  \onslide<2->{
+    \infer[\xname{\rn{pair}}{\wedge\rn{I}}]{
+      \isa{\pair{a}{b}}{A \xx B}
+    }{
+      \isa{a}{A} & \isa{b}{B}}
+  }
+  \qquad
+  \onslide<3->{
+    \infer[\xname{\rn{proj}}{\wedge\rn{E}}_1]{\isa{\projl a}{A}}{\isa{a}{A \xx B}}
+  }
+  \qquad
+  \onslide<3->{
+    \infer[\xname{\rn{proj}}{\wedge\rn{E}}_2]{\isa{\projr a}{B}}{\isa{a}{A \xx B}}
+  }
+  \]
+  \[
+  \onslide<4->{
+    \infer[\xname{\rn{app}}{\implE}]{
+      \isa{f\,a}{B}
+    }{\isa{f}{A \xto B} & \isa{a}{A}}
+  }
+  \qquad
+  \onslide<5->{
+    \infer[\xname{\rn{lam}}{\implI}]{
+      \isa{\lambda x. b}{A \xto B}
+    }{
+      %% this is an utter hack
+      \deduce[\ ^{\vdots}]{\isa{b}{B}}{\isa{x}{A}}
+    }
+  }
+  \]
 \end{frame}
 
 
@@ -173,17 +462,140 @@
 %\section{How they're {\it secretly the same thing!!}}
 
 \begin{frame}
-  \frametitle{Wait, what?}
-  TODO: how are they the same thing?
+  \begin{center}
+    {\Large\bf Our programming language\\ was a logic in disguise!}
+
+    \only<2>{\Large\bf ... are expressions proofs in disguise?}
+    % They sure are!
+  \end{center}
+\end{frame}
+
+\begin{frame}
+  \begin{center}
+    \frametitle{Curry-Howard: programs as proofs}
+    Here's a simple proof:
+    \[
+    \infer[\wedgeI]{B \wedge A}{
+      \infer[\wedgeE_2]{B}{\assumed{A \wedge B}}
+      &
+      \infer[\wedgeE_1]{A}{\assumed{A \wedge B}}
+    }
+    \]
+    This shows that $\wedge$ is commutative.
+
+    % Let's turn it into a program.
+  \end{center}
+\end{frame}
+
+\begin{frame}
+  \begin{center}
+    \frametitle{Curry-Howard: programs as proofs}
+    Here's a simple \sout{proof} {\color{red} program}:
+    \[
+    \infer[\rn{pair}]{\pair{\projr a}{\projl a} : B \x A}{
+      \infer[\rn{proj}_2]{\projr a : B}{a : A \x B}
+      &
+      \infer[\rn{proj}_1]{\projl a : A}{a : A \x B}
+    }
+    \]
+
+    In Python: \texttt{(a[1], a[0])}.
+    This swaps a pair.
+
+    % Swapping a pair corresponds to commutativity of conjunction!
+  \end{center}
+\end{frame}
+
+\begin{frame}
+  \begin{center}
+    {\Large\bf Commutativity of $\wedge$ \\=\\\vspace{4pt} Swapping a pair!}
+  \end{center}
 \end{frame}
 
 
-\section{4. The Big Picture}
+\section{4. Further connections}
 %\section{The bigger picture (``why should I care'')}
 
 \begin{frame}
-  \frametitle{In context}
-  TODO: what's the bigger picture anyway?
+  \frametitle{What have we just learned?}
+  \begin{center}
+    \begin{tabular}{rcl}
+      propositions &=& types\\
+      proofs &=& expressions\\
+      ``and'', $\wedge$ &=& pairs, $\x$\\
+      ``implies'', $\impl$ &=& functions, $\to$\\
+      rules of logic &=& rules of typing\\
+      commutativity of $\wedge$ &=& swapping a pair
+    \end{tabular}
+
+    \vspace{1em}
+    {\large\bf We have found a bridge between\\ logic and programming languages.}
+  \end{center}
+\end{frame}
+
+\begin{frame}
+  \frametitle{What use is this?}
+
+  \begin{itemize}
+  \item Prove theorems by writing code: Coq, Agda, Idris, ...
+  \item Prove theorems \textbf{about} programming: \\
+    can apply a hundred years of work in formal logic!
+  \item Serendipity: Take a thing in \{logic,PL\}, \\ask ``what does this mean in \{PL,logic\}?''
+  \item Design of programming language features
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Serendipity}
+
+  What logical concepts have meaning in programming-land?
+  \begin{itemize}
+  \item Connectives: $\vee$, $\neg$, $\forall$, $\exists$, ...
+  \item Properties: Constructivity, consistency, ...
+  \item Systems: Modal logic, linear logic, ...
+  \end{itemize}
+  \vspace{1em}
+
+  What PL concepts have meaning in logic-land?
+  \begin{itemize}
+  \item \textbf{Evaluation}, Turing-completeness, laziness, mutation, subtyping,
+    exceptions, monads, ...
+  \end{itemize}
+
+  %% \begin{itemize}
+  %% \item Connectives: $\vee$, $\neg$, $\forall$, $\exists$, ...
+  %% \item Properties: constructivity, consistency, \\satisfiability, local consistency \& completeness, ...
+  %% \item Systems: Modal logic, linear logic, ...
+  %% \end{itemize}
+  %% What do these mean in programming-land?
+  %% \vspace{.2em}
+
+  %% \begin{itemize}
+  %% \item Evaluation, turing-completeness, laziness, mutability, subtyping, exceptions, monads.\\
+  %% \end{itemize}
+  %% What do these mean in logic-land?
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{BONUS ROUND: Evaluating our $\lambda$-calculus}
+
+  Read ``$a \steps b$'' as ``$a$ steps to $b$'' or ``whenever you see $a$, you
+  can replace it with $b$''.
+
+  \begin{center}
+    \begin{tabular}{cc}
+      Rule & in Python\\
+      \hline
+      $\projl \pair{a}{b} \steps a$ & \texttt{(a,b)[0]} evaluates to \texttt{a}\\
+      $\projr \pair{a}{b} \steps b$ & \texttt{(a,b)[1]} evaluates to \texttt{b}\\
+      \onslide<2->{$(\lambda x. a)\, b \steps \subst{b/x}a$}
+      & \onslide<3->{\texttt{(lambda\ x:\ a)(b)} evaluates to}\\
+      & \onslide<4>{... well, it's complicated}
+    \end{tabular}
+  \end{center}
+
+  \onslide<2-> $\subst{b/x} a$ means ``substitute $b$ for $x$ in $a$''.
 \end{frame}
 
 \end{document}

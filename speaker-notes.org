@@ -1,0 +1,114 @@
+* What's this talk about?
+Curry Howard correspondence is BLAH
+"from the ground up"
+concrete example of this connection
+if you don't know what a formal logic is, that's okay
+not a PL you can actually run
+further connections
+
+* Formal logic
+** What's formal logic?
+How many people have worked with formal logic at all before?
+
+Logic: what ways of reasoning are valid
+Formal logic: being super pedantic
+a computer could check it
+representing reasoning with symbols
+& giving rules for manipulating them
+many ways to do this, I show you one
+first need to introduce a tool
+
+** Inference rules
+Looks like this
+An inference rule represents a "rule of reasoning"
+Repeat slide
+
+** Defining inference rules
+Example rule of reasoning
+Now suppose we want to use it
+
+** Using inference rules to prove things
+Repeat slide, do proof, show assumptions
+
+Does everyone think they vaguely understand inference rules?
+If you feel a little shaky, that's okay, we'll get more practice later
+(Am I going too fast? Too slow?)
+
+** A simple logic
+Really simple logic, just "and" and "implies"
+Other things we could add, but won't
+define connectives with inference rules
+
+** A simple logic: and
+Let's start with rules for "and"
+how to prove (A and B): prove A and prove B
+note that A, B are variables, stand-ins for anything
+what can you *do* once you've proved (A and B)?
+"I" for intro, "E" for elim
+
+** A simple logic: and: example proofs
+Prove B from (A and (B and C))
+Prove (A and A) from A, can use assumptions multiple times
+Prove (B and C) from (A and B), C
+
+Am I going too fast? too slow?
+
+** A simple logic: implies
+Will be two rules for implies (prove, use)
+Not going to talk about intro
+explain elim, "modus ponens"
+
+** A simple logic: implies: proof 1
+skip if people want
+
+** A simple logic: implies
+Natural way to prove "A implies B": assume A, prove B
+Works whether A is true or false - may not even know!
+prove "if it rains tomorrow, I will be unhappy"
+if folks want: prove "if 2 + 2 = 5 then 2 = 3"
+show rule
+scope of assumption
+
+** A simple logic: implies: proofs
+show at least one, skip others if folks seem confident
+mention scoping!
+
+** A simple logic (all together now)
+Questions? Going too fast, too slow?
+
+* A simple programming language
+Completely switch tracks
+So simple it's useless
+Going to explain language mostly by analogy
+
+** A simple lambda-calculus
+Here is everything in my language on one slide (almost)
+a, b stand for expressions
+x, y are variables
+Read slide
+
+** What does pi_1(\x.x) do?
+Ask audience
+For some reason I want static types
+
+** A simple lambda-calculus: types
+two things (functions and pairs), so two types
+mention times for product type, cartesian-product analogy
+
+** How do I know what type an expression has?
+Read slide
+Inference rules express rules for reasoning
+I want rules for reasoning about what type an expression has
+Write a:A for "a has type A", e.g. <2,3> : int x int
+
+** A simple lambda-calculus: typing rules
+Rule for <a,b>, English then inference rule
+Rule for pi_1 a, pi_2 a
+Rule for (f a)
+Rule for (\x.b)
+
+Now I'm going to do some magic.
+
+* The bigger picture
+** What have we just learned?
+** What more is there?

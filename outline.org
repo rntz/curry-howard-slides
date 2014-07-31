@@ -3,6 +3,28 @@ Don't use subscripts! Just use different letters.
 
 Use slides *and* whiteboard.
 
+* Directions to branch out in
+- Show the Curry-Howard interpretations of other constructs (disjunction, forall,
+  negation, existential, dependent product + sum)
+
+- What does evaluation/computation mean for logic? (normalization, connection to
+  turing-completeness)
+
+  - Call-by-name versus call-by-value: whnf versus nf
+
+- What does constructivity have to do with it?
+
+- What other logics/logical constructs have CH interpretations?
+  - Classical logic: time travel!
+  - Linear logic: ownership (Rust), in-place update, session types
+  - Modal logic: staged computation, exceptions, distributed computation,
+    monadic effects, FRP
+
+- What uses does this have?
+  - Theorem provers: Agda, Coq
+  - Design of programming languages
+  - Serendipity: take a thing in {logic,PL}, ask "what does this mean in {PL,logic}?"
+
 * Outline
 Begin with overview of what I'm going to show.
 If you ever feel lost, do not hesitate to ask a question, or just say "I'm lost".
@@ -77,7 +99,7 @@ A formal logic has to define what propositions it's talking about.
 
 - Other example proofs:
   From (A -> (B -> C)) prove A ^ B -> C.
-  Extend to ((A -> B) -> (A -> A ^ B))?
+  Extend to ((A -> B) -> (A -> A ^ B))? 
 
 - "Is the nesting confusing anyone?"
   If confusion about nested ->s, analogy to nested ifs in programming languages:
@@ -90,6 +112,7 @@ A formal logic has to define what propositions it's talking about.
   itself: is each use of a rule legitimate? then it's a valid proof!"
 
 *** Disjunction (?)
+
 *** Negation (?) (... maybe later)
 
 ** Simply Typed Lambda Calculus with Pairs
